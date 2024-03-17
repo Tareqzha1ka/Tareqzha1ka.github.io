@@ -152,7 +152,7 @@
           return;
         }
         // Search by Zone Name
-        var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.NAME_ENGLI.trim() === searchValue);
+        var foundLayer = map._layers[Object.keys(map._layers)].find(layer => layer.feature && layer.feature.properties.NAME_ENGLI === searchValue);
         if (foundLayer) {
           map.fitBounds(foundLayer.getBounds()); // Adjusted zoom level to fit the zone polygon
         } else {
