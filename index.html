@@ -33,8 +33,21 @@
       position: absolute;
       top: 40px; /* Adjusted top position */
       left: 60px; /* Adjusted left position */
-      color: #666; /* Adjusted color */
+      color: red; /* Set color to red */
       font-size: 12px; /* Adjusted font size */
+      z-index: 1000; /* Ensure note stays visible */
+    }
+
+    /* Media query for smaller screens (phones) */
+    @media (max-width: 768px) {
+      #searchInput {
+        left: auto; /* Reset left position */
+        right: 10px; /* Adjusted to right */
+      }
+      #searchNote {
+        left: auto; /* Reset left position */
+        right: 10px; /* Adjusted to right */
+      }
     }
   </style>
 </head>
