@@ -75,7 +75,7 @@
           };
          },
         onEachFeature: function(feature, layer) {
-          layer.bindPopup("Zone Name: " + feature.properties.NAME + "\nZone: " + feature.properties.NAME_ENGLI + "\nMAIL_CODE: " + feature.properties.MAIL_CODE);
+          layer.bindPopup("Zone Name: " + feature.properties.NAME + "<br>Zone: " + feature.properties.NAME_ENGLI + "<br>MAIL_CODE: " + feature.properties.MAIL_CODE);
         }
 
       }).addTo(map);
@@ -94,7 +94,7 @@
           });
         },
         onEachFeature: function(feature, layer) {
-          layer.bindPopup("\nLocation: " + feature.properties.NAME_ENGLI + "\nSize: " + feature.properties.SIZE_OF_TH + "\nType: " + feature.properties.TYPE_OF_WA);
+          layer.bindPopup("<br>Location: " + feature.properties.NAME_ENGLI + "<br>Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA + "<br>X Coordination: " + feature.properties.X_coor + "<br>Y Coordination: " + feature.properties.Y_coor);
         }
       }).addTo(map);
     });
