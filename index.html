@@ -6,62 +6,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
-    /* Style the body */
     body {
       margin: 0;
       height: 100vh;
       width: 100%;
-      position: relative; /* Add position relative */
+      position: relative;
     }
-    /* Style the map */
     #map {
       position: absolute;
       width: 100%;
       top: 0;
       bottom: 0;
     }
-    /* Style the search input */
     #searchInput {
       position: absolute;
       top: 10px;
-      right: 10px; /* Adjusted to right */
+      left: 10px;
       z-index: 1000;
-      width: 200px; /* Adjusted width */
+      width: calc(100% - 80px);
+      max-width: 200px;
     }
-    /* Style the note */
     #searchNote {
       position: absolute;
-      top: 60px; /* Adjusted top position */
-      right: 10px; /* Adjusted right position */
-      color: red; /* Set color to red */
-      font-size: 14px; /* Adjusted font size */
-      z-index: 1000; /* Ensure note stays visible */
+      top: 40px;
+      left: 10px;
+      color: red;
+      font-size: 14px;
+      z-index: 1000;
     }
-
-    /* Media query for smaller screens (phones) */
     @media (max-width: 768px) {
       #searchInput {
-        right: auto; /* Reset right position */
-        left: 10px; /* Adjusted to left */
+        left: 40px;
       }
       #searchNote {
-        right: auto; /* Reset right position */
-        left: 10px; /* Adjusted to left */
+        top: 60px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Add the map container -->
   <div id="map"></div>
-  <!-- Add the input field for search -->
   <input type="text" id="searchInput" placeholder="Search by ID" />
-  <!-- Add a note below the search bar -->
   <div id="searchNote">ID values are between 0 and 2348.</div>
-  <!-- Rest of your code follows... -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
   <script>
     const mapOptions = {
       zoomSnap: 0.5,
@@ -69,14 +57,11 @@
       zoom: 17.5,
     };
     const map = L.map("map", mapOptions);
-    
-    // Add a base map to the map
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 20
     }).addTo(map);
-    
     function getColor(name) {
       switch (name) {
         case "Al-Masyoun":
@@ -99,9 +84,7 @@
           return "yellow";
       }
     }
-
     var wasteContainerLayer;
-
     $.getJSON("RamallahZones.json", function (RZ) {
       L.geoJson(RZ, {
         style: function (feature) {
@@ -116,10 +99,8 @@
         onEachFeature: function (feature, layer) {
           layer.bindPopup("Zone Name: " + feature.properties.NAME + "<br>Zone: " + feature.properties.NAME_ENGLI + "<br>MAIL_CODE: " + feature.properties.MAIL_CODE);
         }
-
       }).addTo(map);
     });
-
     $.getJSON("wasteContainer.json", function (WC) {
       wasteContainerLayer = L.geoJson(WC, {
         pointToLayer: function (feature, latlng) {
@@ -137,15 +118,14 @@
         }
       }).addTo(map);
     });
-
     function searchPoint() {
       var searchValue = $('#searchInput').val();
       if (searchValue.trim() !== '') {
         var foundLayers = wasteContainerLayer.getLayers().filter(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
         if (foundLayers.length > 0) {
           var bounds = L.latLngBounds(foundLayers.map(layer => layer.getLatLng()));
-          map.fitBounds(bounds.pad(0.2)); // Adjust padding as necessary
-          foundLayers.forEach(layer => layer.openPopup()); // Open popups of the found points
+          map.fitBounds(bounds.pad(0.2));
+          foundLayers.forEach(layer => layer.openPopup());
         } else {
           alert("Point not found with given TARGET_FID.");
         }
@@ -153,8 +133,6 @@
         alert("Please enter a value to search.");
       }
     }
-
-    // Event listener to trigger search on pressing Enter key
     $('#searchInput').keypress(function(event){
       var keycode = (event.keyCode ? event.keyCode : event.which);
       if(keycode == '13'){
