@@ -20,7 +20,7 @@
       bottom: 0;
     }
     /* Style the search input */
-    #searchInput {
+    #searchContainer {
       position: absolute;
       top: 10px;
       right: 10px; /* Adjusted to right */
@@ -31,8 +31,15 @@
 <body>
   <!-- Add the map container -->
   <div id="map"></div>
-  <!-- Add the input field for search -->
-  <input type="text" id="searchInput" placeholder="Search by ID" />
+  <!-- Add the search container -->
+  <div id="searchContainer">
+    <select id="searchCriteria">
+      <option value="zoneName">Search by Zone Name</option>
+      <option value="targetId">Search by Target ID</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="Enter value" />
+    <button onclick="searchPoint()">Search</button>
+  </div>
   <!-- Rest of your code follows... -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -114,28 +121,32 @@
     });
 
     function searchPoint() {
+      var searchCriteria = $('#searchCriteria').val();
       var searchValue = $('#searchInput').val();
       if (searchValue.trim() !== '') {
-        var foundLayers = wasteContainerLayer.getLayers().filter(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
-        if (foundLayers.length > 0) {
-          var bounds = L.latLngBounds(foundLayers.map(layer => layer.getLatLng()));
-          map.fitBounds(bounds.pad(0.2)); // Adjust padding as necessary
-          foundLayers.forEach(layer => layer.openPopup()); // Open popups of the found points
-        } else {
-          alert("Point not found with given TARGET_FID.");
+        if (searchCriteria === 'zoneName') {
+          // Search by Zone Name
+          var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.NAME_ENGLI === searchValue);
+          if (foundLayer) {
+            map.setView(foundLayer.getLatLng(), 18); // Adjusted zoom level to be more zoomed in
+            foundLayer.openPopup(); // Open popup of the found point
+          } else {
+            alert("Point not found with given Zone Name.");
+          }
+        } else if (searchCriteria === 'targetId') {
+          // Search by Target ID
+          var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
+          if (foundLayer) {
+            map.setView(foundLayer.getLatLng(), 18); // Adjusted zoom level to be more zoomed in
+            foundLayer.openPopup(); // Open popup of the found point
+          } else {
+            alert("Point not found with given Target ID.");
+          }
         }
       } else {
         alert("Please enter a value to search.");
       }
     }
-
-    // Event listener to trigger search on pressing Enter key
-    $('#searchInput').keypress(function(event){
-      var keycode = (event.keyCode ? event.keyCode : event.which);
-      if(keycode == '13'){
-        searchPoint();
-      }
-    });
   </script>
 </body>
 </html>
