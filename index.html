@@ -40,7 +40,16 @@
   subdomains: 'abcd',
   maxZoom: 20
 }).addTo(map);
-
+    function getColor(name) {
+      switch (name) {
+        case "Location1":
+          return "red";
+        case "Location2":
+          return "blue";
+        default:
+          return "orange";
+      }
+    }
 
     $.getJSON("RamallahZones.json", function(RZ) {
       L.geoJson(RZ, {
@@ -82,16 +91,6 @@
         }
       }).addTo(map);
     });
-    function getColor(name) {
-      switch (name) {
-        case "Location1":
-          return "red";
-        case "Location2":
-          return "blue";
-        default:
-          return "orange";
-      }
-    }
   </script>
 </body>
 </html>
