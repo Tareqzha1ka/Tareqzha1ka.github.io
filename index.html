@@ -40,13 +40,34 @@
   subdomains: 'abcd',
   maxZoom: 20
 }).addTo(map);
-
+    function getColor(name) {
+      switch (name) {
+        case "Al-Masyoun":
+          return "red";
+        case "Baten El-Hawa":
+          return "blue";
+        case "City Center":
+          return "Green";
+        case "Old City":
+          return "Orange";
+        case "Al-Wad":
+          return "Purple";
+        case "The Industrial Area":
+          return "Pink";
+        case "Al-Itha'a":
+          return "Gray";
+        case "Al-Tireh":
+          return "White";
+        default:
+          return "yellow";
+      }
+    }
 
     $.getJSON("RamallahZones.json", function(RZ) {
       L.geoJson(RZ, {
         style: function(feature) {
           return {
-            fillColor: "yellow",
+            fillColor: getColor(feature.properties.NAME_ENGLI),
             fillOpacity: 0.3,
             color: "yellow",
             weight: 1.0,
@@ -73,9 +94,7 @@
           });
         },
         onEachFeature: function(feature, layer) {
-          layer.on('click', function(e) {
-            alert("Size: " + feature.properties.SIZE_OF_TH + "\nType: " + feature.properties.TYPE_OF_WA);
-          });
+          layer.bindPopup("Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA);
         }
       }).addTo(map);
     });
