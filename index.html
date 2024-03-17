@@ -28,6 +28,14 @@
       z-index: 1000;
       width: 200px; /* Adjusted width */
     }
+    /* Style the note */
+    #searchNote {
+      position: absolute;
+      top: 40px; /* Adjusted top position */
+      left: 60px; /* Adjusted left position */
+      color: #666; /* Adjusted color */
+      font-size: 12px; /* Adjusted font size */
+    }
   </style>
 </head>
 <body>
@@ -35,6 +43,8 @@
   <div id="map"></div>
   <!-- Add the input field for search -->
   <input type="text" id="searchInput" placeholder="Search by ID" />
+  <!-- Add a note below the search bar -->
+  <div id="searchNote">ID values are between 0 and 2348.</div>
   <!-- Rest of your code follows... -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
