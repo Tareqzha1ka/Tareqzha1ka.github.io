@@ -24,29 +24,29 @@
     #searchInput {
       position: absolute;
       top: 10px;
-      left: 60px; /* Adjusted to left */
+      right: 10px; /* Adjusted to right */
       z-index: 1000;
       width: 200px; /* Adjusted width */
     }
     /* Style the note */
     #searchNote {
       position: absolute;
-      top: 40px; /* Adjusted top position */
-      left: 60px; /* Adjusted left position */
+      top: 60px; /* Adjusted top position */
+      right: 10px; /* Adjusted right position */
       color: red; /* Set color to red */
-      font-size: 12px; /* Adjusted font size */
+      font-size: 14px; /* Adjusted font size */
       z-index: 1000; /* Ensure note stays visible */
     }
 
     /* Media query for smaller screens (phones) */
     @media (max-width: 768px) {
       #searchInput {
-        left: auto; /* Reset left position */
-        right: 10px; /* Adjusted to right */
+        right: auto; /* Reset right position */
+        left: 10px; /* Adjusted to left */
       }
       #searchNote {
-        left: auto; /* Reset left position */
-        right: 10px; /* Adjusted to right */
+        right: auto; /* Reset right position */
+        left: 10px; /* Adjusted to left */
       }
     }
   </style>
