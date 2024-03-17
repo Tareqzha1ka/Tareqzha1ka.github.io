@@ -118,8 +118,8 @@
       if (searchValue.trim() !== '') {
         var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
         if (foundLayer) {
-          map.fitBounds(foundLayer.getBounds());
-          foundLayer.openPopup();
+          map.setView(foundLayer.getLatLng(), 17); // Center map to the found point with zoom level 17
+          foundLayer.openPopup(); // Open popup of the found point
         } else {
           alert("Point not found with given TARGET_FID.");
         }
