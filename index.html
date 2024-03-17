@@ -22,8 +22,11 @@
 </head>
 <body>
   <div id="map"></div>
+  <input type="text" id="searchInput" placeholder="Search by TARGET_FID" />
+  <button onclick="searchPoint()">Search</button>
+
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-<!-- Add a link to the jQuery JavaScript library so you can leverage ajax methods to load your data -->
+  <!-- Add a link to the jQuery JavaScript library so you can leverage ajax methods to load your data -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
   <script>
@@ -33,13 +36,14 @@
       zoom: 17.5,
     };
     const map = L.map("map", mapOptions);
-    
+
     // Add a base map to the map
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  subdomains: 'abcd',
-  maxZoom: 20
-}).addTo(map);
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 20
+    }).addTo(map);
+
     function getColor(name) {
       switch (name) {
         case "Al-Masyoun":
@@ -63,9 +67,9 @@
       }
     }
 
-    $.getJSON("RamallahZones.json", function(RZ) {
+    $.getJSON("RamallahZones.json", function (RZ) {
       L.geoJson(RZ, {
-        style: function(feature) {
+        style: function (feature) {
           return {
             fillColor: getColor(feature.properties.NAME_ENGLI),
             fillOpacity: 0.3,
@@ -73,17 +77,19 @@
             weight: 1.0,
             opacity: 0.7
           };
-         },
-        onEachFeature: function(feature, layer) {
+        },
+        onEachFeature: function (feature, layer) {
           layer.bindPopup("Zone Name: " + feature.properties.NAME + "<br>Zone: " + feature.properties.NAME_ENGLI + "<br>MAIL_CODE: " + feature.properties.MAIL_CODE);
         }
 
       }).addTo(map);
     });
 
-    $.getJSON("wasteContainer.json", function(WC) {
-      L.geoJson(WC, {
-        pointToLayer: function(feature, latlng) {
+    var wasteContainerLayer;
+
+    $.getJSON("wasteContainer.json", function (WC) {
+      wasteContainerLayer = L.geoJson(WC, {
+        pointToLayer: function (feature, latlng) {
           return L.circleMarker(latlng, {
             radius: 5,
             fillColor: "orange",
@@ -93,11 +99,29 @@
             fillOpacity: 0.8
           });
         },
-        onEachFeature: function(feature, layer) {
+        onEachFeature: function (feature, layer) {
           layer.bindPopup("<br>ID: " + feature.properties.TARGET_FID + "<br>Location: " + feature.properties.NAME_ENGLI + "<br>Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA + "<br>X Coordination: " + feature.properties.X_coor + "<br>Y Coordination: " + feature.properties.Y_coor);
         }
       }).addTo(map);
     });
+
+    function searchPoint() {
+      var searchValue = $('#searchInput').val();
+      if (searchValue.trim() !== '') {
+        // Filter the GeoJSON layer based on search value
+        var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
+        if (foundLayer) {
+          // Fit map to the found layer
+          map.fitBounds(foundLayer.getBounds());
+          // Open popup of the found layer
+          foundLayer.openPopup();
+        } else {
+          alert("Point not found with given TARGET_FID.");
+        }
+      } else {
+        alert("Please enter a value to search.");
+      }
+    }
   </script>
 </body>
 </html>
