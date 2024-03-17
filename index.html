@@ -68,6 +68,31 @@
 
     var wasteContainerLayer;
 
+    // Function to get color based on zone name
+    function getColor(name) {
+      switch (name.trim()) {
+        case "Al-Masyoun":
+          return "red";
+        case "Baten El-Hawa":
+          return "blue";
+        case "City Center":
+          return "green";
+        case "Old City":
+          return "orange";
+        case "Al-Wad":
+          return "purple";
+        case "The Industrial Area":
+          return "pink";
+        case "Al-Itha'a":
+          return "gray";
+        case "Al-Tireh":
+          return "white";
+        default:
+          return "yellow";
+      }
+    }
+
+    // Load zones data
     $.getJSON("RamallahZones.json", function (RZ) {
       L.geoJson(RZ, {
         style: function (feature) {
@@ -82,10 +107,10 @@
         onEachFeature: function (feature, layer) {
           layer.bindPopup("Zone Name: " + feature.properties.NAME + "<br>Zone: " + feature.properties.NAME_ENGLI + "<br>MAIL_CODE: " + feature.properties.MAIL_CODE);
         }
-
       }).addTo(map);
     });
 
+    // Load waste container data
     $.getJSON("wasteContainer.json", function (WC) {
       wasteContainerLayer = L.geoJson(WC, {
         pointToLayer: function (feature, latlng) {
@@ -104,6 +129,7 @@
       }).addTo(map);
     });
 
+    // Populate zone names dropdown
     $(document).ready(function() {
       var zoneNames = ["Al-Masyoun", "Baten El-Hawa", "City Center", "Old City", "Al-Wad", "The Industrial Area", "Al-Itha'a", "Al-Tireh"];
       var $zoneNamesDropdown = $('#zoneNames');
