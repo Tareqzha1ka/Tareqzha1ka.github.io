@@ -32,7 +32,7 @@
   <!-- Add the map container -->
   <div id="map"></div>
   <!-- Add the input field for search -->
-  <input type="text" id="searchInput" placeholder="Search by TARGET_FID" />
+  <input type="text" id="searchInput" placeholder="Search by ID" />
   <!-- Rest of your code follows... -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -118,7 +118,7 @@
       if (searchValue.trim() !== '') {
         var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
         if (foundLayer) {
-          map.setView(foundLayer.getLatLng(), 17); // Center map to the found point with zoom level 17
+          map.setView(foundLayer.getLatLng(), 18); // Adjusted zoom level to be more zoomed in
           foundLayer.openPopup(); // Open popup of the found point
         } else {
           alert("Point not found with given TARGET_FID.");
