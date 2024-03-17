@@ -10,7 +10,7 @@
       margin: 0;
       height: 100vh;
       width: 100%;
-      position: relative; /* Add position relative */
+      position: relative;
     }
     /* Style the map */
     #map {
@@ -47,7 +47,7 @@
     <input type="text" id="searchInput" placeholder="Enter Target ID" />
     <button id="searchButton">Search</button>
   </div>
-  <!-- Rest of your code follows... -->
+
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -66,31 +66,7 @@
       maxZoom: 20
     }).addTo(map);
 
-    function getColor(name) {
-      switch (name.trim()) {
-        case "Al-Masyoun":
-          return "red";
-        case "Baten El-Hawa":
-          return "blue";
-        case "City Center":
-          return "green";
-        case "Old City":
-          return "orange";
-        case "Al-Wad":
-          return "purple";
-        case "The Industrial Area":
-          return "pink";
-        case "Al-Itha'a":
-          return "gray";
-        case "Al-Tireh":
-          return "white";
-        default:
-          return "yellow";
-      }
-    }
-
     var wasteContainerLayer;
-    var lastClickedLayer;
 
     $.getJSON("RamallahZones.json", function (RZ) {
       L.geoJson(RZ, {
@@ -124,9 +100,6 @@
         },
         onEachFeature: function (feature, layer) {
           layer.bindPopup("<br>ID: " + feature.properties.TARGET_FID + "<br>Location: " + feature.properties.NAME_ENGLI + "<br>Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA + "<br>X Coordination: " + feature.properties.X_coor + "<br>Y Coordination: " + feature.properties.Y_coor);
-          layer.on('click', function (e) {
-            lastClickedLayer = layer;
-          });
         }
       }).addTo(map);
     });
@@ -182,11 +155,9 @@
       if (selectedCriteria === 'zoneName') {
         $('#zoneNames').show();
         $('#searchInput').hide();
-        $('#searchButton').show();
       } else {
         $('#zoneNames').hide();
         $('#searchInput').show();
-        $('#searchButton').hide();
       }
     });
 
@@ -201,13 +172,6 @@
     // Trigger search when the search button is clicked
     $('#searchButton').click(function() {
       searchPoint();
-    });
-
-    // Prioritize showing popup of the point over the polygon when clicking on the map
-    map.on('click', function (e) {
-      if (lastClickedLayer) {
-        lastClickedLayer.openPopup();
-      }
     });
   </script>
 </body>
