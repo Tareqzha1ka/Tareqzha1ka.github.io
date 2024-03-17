@@ -94,7 +94,7 @@
           });
         },
         onEachFeature: function(feature, layer) {
-          layer.bindPopup("<br>Location: " + feature.properties.NAME_ENGLI + "<br>Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA + "<br>X Coordination: " + feature.properties.X_coor + "<br>Y Coordination: " + feature.properties.Y_coor);
+          layer.bindPopup("<br>ID: " + feature.properties.FID + "<br>Location: " + feature.properties.NAME_ENGLI + "<br>Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA + "<br>X Coordination: " + feature.properties.X_coor + "<br>Y Coordination: " + feature.properties.Y_coor);
         }
       }).addTo(map);
     });
