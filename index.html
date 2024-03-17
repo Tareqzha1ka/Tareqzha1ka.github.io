@@ -67,7 +67,7 @@
     }).addTo(map);
 
     function getColor(name) {
-      switch (name) {
+      switch (name.trim()) {
         case "Al-Masyoun":
           return "red";
         case "Baten El-Hawa":
@@ -90,6 +90,7 @@
     }
 
     var wasteContainerLayer;
+    var lastClickedLayer;
 
     $.getJSON("RamallahZones.json", function (RZ) {
       L.geoJson(RZ, {
@@ -123,6 +124,9 @@
         },
         onEachFeature: function (feature, layer) {
           layer.bindPopup("<br>ID: " + feature.properties.TARGET_FID + "<br>Location: " + feature.properties.NAME_ENGLI + "<br>Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA + "<br>X Coordination: " + feature.properties.X_coor + "<br>Y Coordination: " + feature.properties.Y_coor);
+          layer.on('click', function (e) {
+            lastClickedLayer = layer;
+          });
         }
       }).addTo(map);
     });
@@ -164,7 +168,7 @@
         // Search by Target ID
         var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
         if (foundLayer) {
-          map.setView(foundLayer.getLatLng(), 18); // Adjusted zoom level to be more zoomed in
+          map.setView(foundLayer.getLatLng(), 20); // Adjusted zoom level to be more zoomed in
           foundLayer.openPopup(); // Open popup of the found point
         } else {
           alert("Point not found with given Target ID.");
@@ -197,6 +201,13 @@
     // Trigger search when the search button is clicked
     $('#searchButton').click(function() {
       searchPoint();
+    });
+
+    // Prioritize showing popup of the point over the polygon when clicking on the map
+    map.on('click', function (e) {
+      if (lastClickedLayer) {
+        lastClickedLayer.openPopup();
+      }
     });
   </script>
 </body>
