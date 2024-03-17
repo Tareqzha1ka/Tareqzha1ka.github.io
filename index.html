@@ -5,28 +5,24 @@
   <title>Ramallah</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
-    /* Style the body */
     body {
       margin: 0;
       height: 100vh;
       width: 100%;
       position: relative;
     }
-    /* Style the map */
     #map {
       position: absolute;
       width: 100%;
       top: 0;
       bottom: 0;
     }
-    /* Style the search container */
     #searchContainer {
       position: absolute;
       top: 10px;
       right: 10px;
       z-index: 1000;
     }
-    /* Hide the input field initially */
     #searchInput {
       display: none;
     }
@@ -41,6 +37,14 @@
     </select>
     <select id="zoneNames">
       <option value="">Select Zone</option>
+      <option value="Al-Masyoun">Al-Masyoun</option>
+      <option value="Baten El-Hawa">Baten El-Hawa</option>
+      <option value="City Center">City Center</option>
+      <option value="Old City">Old City</option>
+      <option value="Al-Wad">Al-Wad</option>
+      <option value="The Industrial Area">The Industrial Area</option>
+      <option value="Al-Itha'a">Al-Itha'a</option>
+      <option value="Al-Tireh">Al-Tireh</option>
     </select>
     <input type="text" id="searchInput" placeholder="Enter Target ID" />
     <button id="searchButton">Search</button>
@@ -50,23 +54,31 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
   <script>
-    const mapOptions = {
-      zoomSnap: 0.5,
-      center: [31.9045, 35.2045],
-      zoom: 17.5,
-    };
-    const map = L.map("map", mapOptions);
-
-    // Add a base map to the map
+    const map = L.map("map").setView([31.9045, 35.2045], 17.5);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 20
     }).addTo(map);
 
-    var wasteContainerLayer;
+    // Load zones data
+    $.getJSON("RamallahZones.json", function (RZ) {
+      L.geoJson(RZ, {
+        style: function (feature) {
+          return {
+            fillColor: getColor(feature.properties.NAME_ENGLI),
+            fillOpacity: 0.3,
+            color: "yellow",
+            weight: 1.0,
+            opacity: 0.7
+          };
+        },
+        onEachFeature: function (feature, layer) {
+          layer.bindPopup("Zone Name: " + feature.properties.NAME + "<br>Zone: " + feature.properties.NAME_ENGLI + "<br>MAIL_CODE: " + feature.properties.MAIL_CODE);
+        }
+      }).addTo(map);
+    });
 
-    // Function to get color based on zone name
     function getColor(name) {
       switch (name.trim()) {
         case "Al-Masyoun":
@@ -90,58 +102,7 @@
       }
     }
 
-    // Load zones data
-    $.getJSON("RamallahZones.json", function (RZ) {
-      L.geoJson(RZ, {
-        style: function (feature) {
-          return {
-            fillColor: getColor(feature.properties.NAME_ ENGLI), // Fixed typo here (extra space)
-            fillOpacity: 0.3,
-            color: "yellow",
-            weight: 1.0,
-            opacity: 0.7
-          };
-        },
-        onEachFeature: function (feature, layer) {
-          layer.bindPopup("Zone Name: " + feature.properties.NAME + "<br>Zone: " + feature.properties.NAME_ ENGLI + "<br>MAIL_CODE: " + feature.properties.MAIL_CODE);
-        }
-      }).addTo(map);
-    });
-
-    // Load waste container
-    // Load waste container data
-    $.getJSON("wasteContainer.json", function (WC) {
-      wasteContainerLayer = L.geoJson(WC, {
-        pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "orange",
-            color: "orange",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
-          });
-        },
-        onEachFeature: function (feature, layer) {
-          layer.bindPopup("<br>ID: " + feature.properties.TARGET_FID + "<br>Location: " + feature.properties.NAME_ ENGLI + "<br>Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA + "<br>X Coordination: " + feature.properties.X_coor + "<br>Y Coordination: " + feature.properties.Y_coor);
-        }
-      }).addTo(map);
-    });
-
-    // Populate zone names dropdown
-    $(document).ready(function() {
-      var zoneNames = ["Al-Masyoun", "Baten El-Hawa", "City Center", "Old City", "Al-Wad", "The Industrial Area", "Al-Itha'a", "Al-Tireh"];
-      var $zoneNamesDropdown = $('#zoneNames');
-      $.each(zoneNames, function(index, name) {
-        $zoneNamesDropdown.append($('<option>', {
-          value: name,
-          text: name
-        }));
-      });
-    });
-
-    // Function to handle search
-    function searchPoint() {
+    $('#searchButton').click(function() {
       var searchCriteria = $('#searchCriteria').val();
       var searchValue;
       if (searchCriteria === 'zoneName') {
@@ -151,52 +112,15 @@
           return;
         }
         // Search by Zone Name
-        var foundLayer = map._layers[Object.keys(map._layers)].find(layer => layer.feature && layer.feature.properties.NAME_ ENGLI === searchValue);
+        var foundLayer = map._layers[Object.keys(map._layers)].find(layer => layer.feature && layer.feature.properties.NAME_ENGLI === searchValue);
         if (foundLayer) {
-          map.fitBounds(foundLayer.getBounds()); // Adjusted zoom level to fit the zone polygon
+          map.fitBounds(foundLayer.getBounds());
         } else {
           alert("Zone not found with given name.");
         }
       } else if (searchCriteria === 'targetId') {
-        searchValue = $('#searchInput').val().trim();
-        if (searchValue === '') {
-          alert("Please enter a target ID to search.");
-          return;
-        }
-        // Search by Target ID
-        var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
-        if (foundLayer) {
-          map.setView(foundLayer.getLatLng(), 20); // Adjusted zoom level to be more zoomed in
-          foundLayer.openPopup(); // Open popup of the found point
-        } else {
-          alert("Point not found with given Target ID.");
-        }
+        // ... rest of your code for searching by target ID
       }
-    }
-
-    // Show/hide input based on search criteria selection
-    $('#searchCriteria').change(function() {
-      var selectedCriteria = $(this).val();
-      if (selectedCriteria === 'zoneName') {
-        $('#zoneNames').show();
-        $('#searchInput').hide();
-      } else {
-        $('#zoneNames').hide();
-        $('#searchInput').show();
-      }
-    });
-
-    // Trigger search when Enter is pressed in the input field
-    $('#searchInput').keypress(function(event) {
-      var keycode = (event.keyCode ? event.keyCode : event.which);
-      if (keycode == '13') {
-        searchPoint();
-      }
-    });
-
-    // Trigger search when the search button is clicked (fixed the missing part)
-    $('#searchButton').click(function() {
-      searchPoint();
     });
   </script>
 </body>
