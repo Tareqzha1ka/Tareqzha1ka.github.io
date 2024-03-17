@@ -45,6 +45,7 @@
       <option value="">Select Zone</option>
     </select>
     <input type="text" id="searchInput" placeholder="Enter Target ID" />
+    <button id="searchButton">Search</button>
   </div>
   <!-- Rest of your code follows... -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
@@ -127,7 +128,7 @@
     });
 
     $(document).ready(function() {
-      var zoneNames = getZoneNames();
+      var zoneNames = ["Al-Masyoun", "Baten El-Hawa", "City Center", "Old City", "Al-Wad", "The Industrial Area", "Al-Itha'a", "Al-Tireh"];
       var $zoneNamesDropdown = $('#zoneNames');
       $.each(zoneNames, function(index, name) {
         $zoneNamesDropdown.append($('<option>', {
@@ -177,9 +178,11 @@
       if (selectedCriteria === 'zoneName') {
         $('#zoneNames').show();
         $('#searchInput').hide();
+        $('#searchButton').show();
       } else {
         $('#zoneNames').hide();
         $('#searchInput').show();
+        $('#searchButton').hide();
       }
     });
 
@@ -189,6 +192,11 @@
       if (keycode == '13') {
         searchPoint();
       }
+    });
+
+    // Trigger search when the search button is clicked
+    $('#searchButton').click(function() {
+      searchPoint();
     });
   </script>
 </body>
