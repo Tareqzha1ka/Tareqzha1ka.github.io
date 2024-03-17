@@ -46,7 +46,7 @@
       L.geoJson(RZ, {
         style: function(feature) {
           return {
-            fillColor: "yellow",
+            fillColor: getColor(feature.properties.NAME_ENGLI),
             fillOpacity: 0.3,
             color: "yellow",
             weight: 1.0,
@@ -82,6 +82,16 @@
         }
       }).addTo(map);
     });
+    function getColor(name) {
+      switch (name) {
+        case "Location1":
+          return "red";
+        case "Location2":
+          return "blue";
+        default:
+          return "orange";
+      }
+    }
   </script>
 </body>
 </html>
