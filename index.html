@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Ramallah</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
     /* Style the body */
@@ -23,7 +24,8 @@
     #searchInput {
       position: absolute;
       top: 10px;
-      right: 10px; /* Adjusted to right */
+      left: 10px; /* Adjusted to left */
+      width: calc(100% - 20px); /* Adjusted width */
       z-index: 1000;
     }
   </style>
