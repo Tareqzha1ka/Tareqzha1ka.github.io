@@ -41,8 +41,15 @@
   maxZoom: 20
 }).addTo(map);
     function getColor(name) {
-  return colorPalette[name] || "orange"; // Return color from palette or default color
-}
+      switch (name) {
+        case "Al-Masyoun":
+          return "red";
+        case "Location2":
+          return "blue";
+        default:
+          return "yellow";
+      }
+    }
 
     $.getJSON("RamallahZones.json", function(RZ) {
       L.geoJson(RZ, {
