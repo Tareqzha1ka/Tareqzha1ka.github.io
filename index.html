@@ -19,11 +19,11 @@
       top: 0;
       bottom: 0;
     }
-    /* Style the search input */
+    /* Style the search container */
     #searchContainer {
       position: absolute;
       top: 10px;
-      right: 10px; /* Adjusted to right */
+      right: 10px;
       z-index: 1000;
     }
   </style>
@@ -37,7 +37,10 @@
       <option value="zoneName">Search by Zone Name</option>
       <option value="targetId">Search by Target ID</option>
     </select>
-    <input type="text" id="searchInput" placeholder="Enter value" />
+    <select id="zoneNames">
+      <option value="">Select Zone</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="Enter Target ID" />
     <button onclick="searchPoint()">Search</button>
   </div>
   <!-- Rest of your code follows... -->
@@ -58,28 +61,18 @@
       subdomains: 'abcd',
       maxZoom: 20
     }).addTo(map);
-    
-    function getColor(name) {
-      switch (name) {
-        case "Al-Masyoun":
-          return "red";
-        case "Baten El-Hawa":
-          return "blue";
-        case "City Center":
-          return "Green";
-        case "Old City":
-          return "Orange";
-        case "Al-Wad":
-          return "Purple";
-        case "The Industrial Area":
-          return "Pink";
-        case "Al-Itha'a":
-          return "Gray";
-        case "Al-Tireh":
-          return "White";
-        default:
-          return "yellow";
-      }
+
+    function getZoneNames() {
+      return [
+        "Al-Masyoun",
+        "Baten El-Hawa",
+        "City Center",
+        "Old City",
+        "Al-Wad",
+        "The Industrial Area",
+        "Al-Itha'a",
+        "Al-Tireh"
+      ];
     }
 
     var wasteContainerLayer;
@@ -120,18 +113,33 @@
       }).addTo(map);
     });
 
+    $(document).ready(function() {
+      var zoneNames = getZoneNames();
+      var $zoneNamesDropdown = $('#zoneNames');
+      $.each(zoneNames, function(index, name) {
+        $zoneNamesDropdown.append($('<option>', {
+          value: name,
+          text: name
+        }));
+      });
+    });
+
     function searchPoint() {
       var searchCriteria = $('#searchCriteria').val();
-      var searchValue = $('#searchInput').val();
+      var searchValue;
+      if (searchCriteria === 'zoneName') {
+        searchValue = $('#zoneNames').val();
+      } else {
+        searchValue = $('#searchInput').val();
+      }
       if (searchValue.trim() !== '') {
         if (searchCriteria === 'zoneName') {
           // Search by Zone Name
-          var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.NAME_ENGLI === searchValue);
+          var foundLayer = wasteContainerLayer.getLayers().find(layer => getColor(layer.feature.properties.NAME_ENGLI) === searchValue);
           if (foundLayer) {
-            map.setView(foundLayer.getLatLng(), 18); // Adjusted zoom level to be more zoomed in
-            foundLayer.openPopup(); // Open popup of the found point
+            map.fitBounds(foundLayer.getBounds()); // Adjusted zoom level to fit the zone polygon
           } else {
-            alert("Point not found with given Zone Name.");
+            alert("Zone not found with given name.");
           }
         } else if (searchCriteria === 'targetId') {
           // Search by Target ID
