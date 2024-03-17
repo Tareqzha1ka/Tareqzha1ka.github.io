@@ -26,6 +26,10 @@
       right: 10px;
       z-index: 1000;
     }
+    /* Hide the input field initially */
+    #searchInput {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -41,7 +45,7 @@
       <option value="">Select Zone</option>
     </select>
     <input type="text" id="searchInput" placeholder="Enter Target ID" />
-    <button onclick="searchPoint()">Search</button>
+    <button id="searchButton">Search</button>
   </div>
   <!-- Rest of your code follows... -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
@@ -124,6 +128,7 @@
       });
     });
 
+    // Function to handle search
     function searchPoint() {
       var searchCriteria = $('#searchCriteria').val();
       var searchValue;
@@ -155,6 +160,28 @@
         alert("Please enter a value to search.");
       }
     }
+
+    // Show/hide input based on search criteria selection
+    $('#searchCriteria').change(function() {
+      var selectedCriteria = $(this).val();
+      if (selectedCriteria === 'zoneName') {
+        $('#zoneNames').show();
+        $('#searchInput').hide();
+        $('#searchButton').text('Search');
+      } else {
+        $('#zoneNames').hide();
+        $('#searchInput').show();
+        $('#searchButton').text('Press Enter to Search');
+      }
+    });
+
+    // Trigger search when Enter is pressed in the input field
+    $('#searchInput').keypress(function(event) {
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if (keycode == '13') {
+        searchPoint();
+      }
+    });
   </script>
 </body>
 </html>
