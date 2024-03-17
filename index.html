@@ -127,6 +127,14 @@
         alert("Please enter a value to search.");
       }
     }
+
+    // Event listener to trigger search on pressing Enter key
+    $('#searchInput').keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        searchPoint();
+      }
+    });
   </script>
 </body>
 </html>
