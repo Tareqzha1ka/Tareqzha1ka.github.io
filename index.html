@@ -45,7 +45,6 @@
       <option value="">Select Zone</option>
     </select>
     <input type="text" id="searchInput" placeholder="Enter Target ID" />
-    <button id="searchButton">Search</button>
   </div>
   <!-- Rest of your code follows... -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
@@ -134,30 +133,31 @@
       var searchValue;
       if (searchCriteria === 'zoneName') {
         searchValue = $('#zoneNames').val();
-      } else {
-        searchValue = $('#searchInput').val();
-      }
-      if (searchValue.trim() !== '') {
-        if (searchCriteria === 'zoneName') {
-          // Search by Zone Name
-          var foundLayer = wasteContainerLayer.getLayers().find(layer => getColor(layer.feature.properties.NAME_ENGLI) === searchValue);
-          if (foundLayer) {
-            map.fitBounds(foundLayer.getBounds()); // Adjusted zoom level to fit the zone polygon
-          } else {
-            alert("Zone not found with given name.");
-          }
-        } else if (searchCriteria === 'targetId') {
-          // Search by Target ID
-          var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
-          if (foundLayer) {
-            map.setView(foundLayer.getLatLng(), 18); // Adjusted zoom level to be more zoomed in
-            foundLayer.openPopup(); // Open popup of the found point
-          } else {
-            alert("Point not found with given Target ID.");
-          }
+        if (searchValue.trim() === '') {
+          alert("Please select a zone to search.");
+          return;
         }
-      } else {
-        alert("Please enter a value to search.");
+        // Search by Zone Name
+        var foundLayer = wasteContainerLayer.getLayers().find(layer => getColor(layer.feature.properties.NAME_ENGLI) === searchValue);
+        if (foundLayer) {
+          map.fitBounds(foundLayer.getBounds()); // Adjusted zoom level to fit the zone polygon
+        } else {
+          alert("Zone not found with given name.");
+        }
+      } else if (searchCriteria === 'targetId') {
+        searchValue = $('#searchInput').val().trim();
+        if (searchValue === '') {
+          alert("Please enter a target ID to search.");
+          return;
+        }
+        // Search by Target ID
+        var foundLayer = wasteContainerLayer.getLayers().find(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
+        if (foundLayer) {
+          map.setView(foundLayer.getLatLng(), 18); // Adjusted zoom level to be more zoomed in
+          foundLayer.openPopup(); // Open popup of the found point
+        } else {
+          alert("Point not found with given Target ID.");
+        }
       }
     }
 
@@ -167,11 +167,9 @@
       if (selectedCriteria === 'zoneName') {
         $('#zoneNames').show();
         $('#searchInput').hide();
-        $('#searchButton').text('Search');
       } else {
         $('#zoneNames').hide();
         $('#searchInput').show();
-        $('#searchButton').text('Press Enter to Search');
       }
     });
 
