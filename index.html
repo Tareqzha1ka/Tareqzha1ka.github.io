@@ -32,6 +32,12 @@
       font-size: 14px;
       z-index: 1000;
     }
+    #getLocationBtn {
+      position: absolute;
+      top: 60px; /* Adjusted position */
+      left: 20px; /* Adjusted position */
+      z-index: 1000;
+    }
     @media (min-width: 769px) {
       #searchInput {
         left: auto;
@@ -42,6 +48,10 @@
         right: 20px;
         top: 40px; /* Adjusted */
       }
+      #getLocationBtn {
+        left: auto;
+        right: 20px; /* Adjusted position */
+      }
     }
     @media (max-width: 768px) {
       #searchInput {
@@ -51,6 +61,9 @@
         top: 40px; /* Adjusted */
         left: 70px; /* Adjusted */
       }
+      #getLocationBtn {
+        left: 20px; /* Adjusted position */
+      }
     }
   </style>
 </head>
@@ -58,7 +71,7 @@
   <div id="map"></div>
   <input type="text" id="searchInput" placeholder="Search by ID" />
   <div id="searchNote">ID values are between 0 and 2348.</div>
-  <button onclick="getLocation()">Get My Location</button>
+  <button id="getLocationBtn" onclick="getLocation()">Get My Location</button>
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
