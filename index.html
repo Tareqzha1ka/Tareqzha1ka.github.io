@@ -40,7 +40,7 @@
       #searchNote {
         left: auto;
         right: 20px;
-        top: 40px; /* Adjusted */
+        top: 40px;
       }
     }
     @media (max-width: 768px) {
@@ -48,8 +48,8 @@
         left: 50px;
       }
       #searchNote {
-        top: 40px; /* Adjusted */
-        left: 70px; /* Adjusted */
+        top: 40px;
+        left: 20px;
       }
     }
   </style>
@@ -57,7 +57,7 @@
 <body>
   <div id="map"></div>
   <input type="text" id="searchInput" placeholder="Search by ID" />
-  <div id="searchNote">ID values are between 0 and 2348.</div>
+  <div id="searchNote">ID values are between 1 and 8.</div>
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
@@ -100,10 +100,10 @@
         style: function (feature) {
           return {
             fillColor: getColor(feature.properties.NAME_ENGLI),
-            fillOpacity: 0.3,
+            fillOpacity: 0.6,
             color: "yellow",
-            weight: 1.0,
-            opacity: 0.7
+            weight: 1.4,
+            opacity: 0.9
           };
         },
         onEachFeature: function (feature, layer) {
@@ -111,33 +111,33 @@
         }
       }).addTo(map);
     });
-    $.getJSON("wasteContainer.json", function (WC) {
+    $.getJSON("Libraries_P.json", function(WC) {
       wasteContainerLayer = L.geoJson(WC, {
-        pointToLayer: function (feature, latlng) {
+        pointToLayer: function(feature, latlng) {
           return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "orange",
-            color: "orange",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
+            radius: 5.3,
+            fillColor: "red",
+            color: "red",
+            weight: 1.2,
+            opacity: 1.2,
+            fillOpacity: 1
           });
         },
-        onEachFeature: function (feature, layer) {
-          layer.bindPopup("<br>ID: " + feature.properties.TARGET_FID + "<br>Location: " + feature.properties.NAME_ENGLI + "<br>Size: " + feature.properties.SIZE_OF_TH + "<br>Type: " + feature.properties.TYPE_OF_WA + "<br>X Coordination: " + feature.properties.X_coor + "<br>Y Coordination: " + feature.properties.Y_coor);
+        onEachFeature: function(feature, layer) {
+          layer.bindPopup("<br>ID: " + feature.properties.OBJECTID + "<br>Arabic Name: " + feature.properties.BUSNIESS_N + "<br>English Name: " + feature.properties.BUSNIESS_1 + "<br>X Coordination: " + feature.properties.X + "<br>Y Coordination: " + feature.properties.Y);
         }
       }).addTo(map);
     });
     function searchPoint() {
       var searchValue = $('#searchInput').val();
       if (searchValue.trim() !== '') {
-        var foundLayers = wasteContainerLayer.getLayers().filter(layer => layer.feature.properties.TARGET_FID === parseInt(searchValue));
+        var foundLayers = wasteContainerLayer.getLayers().filter(layer => layer.feature.properties.OBJECTID === parseInt(searchValue));
         if (foundLayers.length > 0) {
           var bounds = L.latLngBounds(foundLayers.map(layer => layer.getLatLng()));
           map.fitBounds(bounds.pad(0.2));
           foundLayers.forEach(layer => layer.openPopup());
         } else {
-          alert("Point not found with given TARGET_FID.");
+          alert("Point not found with given OBJECTID.");
         }
       } else {
         alert("Please enter a value to search.");
