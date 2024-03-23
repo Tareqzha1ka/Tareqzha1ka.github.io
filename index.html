@@ -75,7 +75,7 @@
     function getColor(name) {
       switch (name) {
         case "Al-Masyoun":
-          return "red";
+          return "Aqua";
         case "Baten El-Hawa":
           return "blue";
         case "City Center":
@@ -94,15 +94,15 @@
           return "yellow";
       }
     }
-    var wasteContainerLayer;
+    var zoneLayer;
     $.getJSON("RamallahZones.json", function (RZ) {
-      L.geoJson(RZ, {
+      zoneLayer = L.geoJson(RZ, {
         style: function (feature) {
           return {
             fillColor: getColor(feature.properties.NAME_ENGLI),
-            fillOpacity: 0.6,
+            fillOpacity: 0.5,
             color: "yellow",
-            weight: 1.4,
+            weight: 1.2,
             opacity: 0.9
           };
         },
@@ -111,15 +111,16 @@
         }
       }).addTo(map);
     });
+    var pointLayer;
     $.getJSON("Libraries_P.json", function(WC) {
-      wasteContainerLayer = L.geoJson(WC, {
+      pointLayer = L.geoJson(WC, {
         pointToLayer: function(feature, latlng) {
           return L.circleMarker(latlng, {
-            radius: 5.3,
+            radius: 5.2,
             fillColor: "red",
             color: "red",
             weight: 1.2,
-            opacity: 1.3,
+            opacity: 1.4,
             fillOpacity: 1
           });
         },
@@ -131,13 +132,16 @@
     function searchPoint() {
       var searchValue = $('#searchInput').val();
       if (searchValue.trim() !== '') {
-        var foundLayers = wasteContainerLayer.getLayers().filter(layer => layer.feature.properties.OBJECTID === parseInt(searchValue));
+        var foundLayers = pointLayer.getLayers().filter(layer => layer.feature.properties.OBJECTID === parseInt(searchValue));
         if (foundLayers.length > 0) {
           var bounds = L.latLngBounds(foundLayers.map(layer => layer.getLatLng()));
           map.fitBounds(bounds.pad(0.2));
           foundLayers.forEach(layer => layer.openPopup());
         } else {
-          alert("Point not found with given OBJECTID.");
+          L.popup()
+            .setLatLng(map.getCenter())
+            .setContent("Point not found with given OBJECTID.")
+            .openOn(map);
         }
       } else {
         alert("Please enter a value to search.");
@@ -148,6 +152,16 @@
       if(keycode == '13'){
         searchPoint();
       }
+    });
+    map.on('click', function(event) {
+      var layers = [pointLayer, zoneLayer];
+      layers.forEach(function(layer) {
+        layer.eachLayer(function(marker) {
+          if (map.getBounds().contains(event.latlng) && marker instanceof L.Marker && marker.isPopupOpen()) {
+            marker.closePopup();
+          }
+        });
+      });
     });
   </script>
 </body>
