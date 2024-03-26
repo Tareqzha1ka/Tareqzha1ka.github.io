@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Ramallah Libraries</title>
+  <title>Ramallah's Libraries</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
@@ -73,12 +73,12 @@
       background-color: red; /* Default color for points */
       border-radius: 50%; /* Make circles */
     }
-    .triangle {
-      width: 0;
-      height: 0;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-bottom: 10px solid green; /* Default color for features */
+    .rectangle {
+      width: 15px;
+      height: 10px;
+      display: inline-block;
+      background-color: green; /* Default color for features */
+      margin-right: 5px;
     }
   </style>
 </head>
@@ -122,7 +122,7 @@
       const div = L.DomUtil.create('div', 'legend');
       for (const key in legendContents) {
         if (legendContents.hasOwnProperty(key)) {
-          const icon = key === "Libraries" ? '<span class="legend-color"></span>' : '<span class="legend-color triangle" style="border-bottom-color:'+ legendContents[key] +'"></span>';
+          const icon = key === "Libraries" ? '<span class="legend-color"></span>' : '<span class="legend-color rectangle" style="background-color:'+ legendContents[key] +'"></span>';
           div.innerHTML += '<div class="legend-item">' + icon + key + '</div>';
         }
       }
