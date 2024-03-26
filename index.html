@@ -52,12 +52,31 @@
         left: 20px;
       }
     }
+    .legend {
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 5px;
+      border-radius: 5px;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+    .legend-item {
+      margin-bottom: 5px;
+    }
+    .legend-color {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+    }
   </style>
 </head>
 <body>
   <div id="map"></div>
   <input type="text" id="searchInput" placeholder="Search by ID" />
   <div id="searchNote">ID values are between 1 and 8.</div>
+  <div id="legend" class="legend"></div>
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
@@ -72,6 +91,36 @@
       subdomains: 'abcd',
       maxZoom: 20
     }).addTo(map);
+
+    // Define legend contents
+    const legendContents = {
+      "Al-Masyoun": "Aqua",
+      "Baten El-Hawa": "blue",
+      "City Center": "Green",
+      "Old City": "Orange",
+      "Al-Wad": "Purple",
+      "The Industrial Area": "Pink",
+      "Al-Itha'a": "Gray",
+      "Al-Tireh": "White",
+      "Point": "red" // For points
+    };
+
+    // Add legend control to the map
+    const legend = L.control({position: 'bottomleft'});
+
+    legend.onAdd = function () {
+      const div = L.DomUtil.create('div', 'legend');
+      for (const key in legendContents) {
+        if (legendContents.hasOwnProperty(key)) {
+          div.innerHTML += `<div class="legend-item"><span class="legend-color" style="background-color:${legendContents[key]}"></span>${key}</div>`;
+        }
+      }
+      return div;
+    };
+
+    legend.addTo(map);
+
+    // Function to get color based on feature name
     function getColor(name) {
       switch (name) {
         case "Al-Masyoun":
