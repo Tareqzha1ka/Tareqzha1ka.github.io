@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Ramallah</title>
+  <title>Ramallah's Libraries</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
   <style>
@@ -70,8 +70,14 @@
       width: 20px;
       height: 20px;
       margin-right: 5px;
-      border-radius: 50%; /* Round shape for points */
       background-color: red; /* Default color for points */
+    }
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 10px solid green; /* Default color for features */
     }
   </style>
 </head>
@@ -115,7 +121,8 @@
       const div = L.DomUtil.create('div', 'legend');
       for (const key in legendContents) {
         if (legendContents.hasOwnProperty(key)) {
-          div.innerHTML += `<div class="legend-item"><span class="legend-color" style="background-color:${legendContents[key]}"></span>${key}</div>`;
+          const icon = key === "Libraries" ? '<span class="legend-color"></span>' : '<span class="legend-color triangle" style="border-bottom-color:'+ legendContents[key] +'"></span>';
+          div.innerHTML += '<div class="legend-item">' + icon + key + '</div>';
         }
       }
       return div;
@@ -146,6 +153,7 @@
           return "yellow";
       }
     }
+
     var zoneLayer;
     $.getJSON("RamallahZones.json", function (RZ) {
       zoneLayer = L.geoJson(RZ, {
@@ -163,6 +171,7 @@
         }
       }).addTo(map);
     });
+
     var pointLayer;
     $.getJSON("Libraries_P.json", function(WC) {
       pointLayer = L.geoJson(WC, {
@@ -181,42 +190,44 @@
         }
       }).addTo(map);
     });
+
     function searchPoint() {
       var searchValue = $('#searchInput').val();
-        if (searchValue.trim() !== '') {
-            var foundLayers = pointLayer.getLayers().filter(layer => layer.feature.properties.OBJECTID === parseInt(searchValue));
-            if (foundLayers.length > 0) {
-                var bounds = L.latLngBounds(foundLayers.map(layer => layer.getLatLng()));
-                map.fitBounds(bounds.pad(0.2));
-                foundLayers.forEach(layer => layer.openPopup());
-            } else {
-                L.popup()
-                    .setLatLng(map.getCenter())
-                    .setContent("Point not found with given OBJECTID.")
-                    .openOn(map);
-            }
+      if (searchValue.trim() !== '') {
+        var foundLayers = pointLayer.getLayers().filter(layer => layer.feature.properties.OBJECTID === parseInt(searchValue));
+        if (foundLayers.length > 0) {
+          var bounds = L.latLngBounds(foundLayers.map(layer => layer.getLatLng()));
+          map.fitBounds(bounds.pad(0.2));
+          foundLayers.forEach(layer => layer.openPopup());
         } else {
-            alert("Please enter a value to search.");
+          L.popup()
+            .setLatLng(map.getCenter())
+            .setContent("Point not found with given OBJECTID.")
+            .openOn(map);
         }
+      } else {
+        alert("Please enter a value to search.");
+      }
     }
 
     $('#searchInput').keypress(function(event){
-        var keycode = (event.keyCode ? event.keyCode : event.which);
-        if(keycode == '13'){
-            searchPoint();
-        }
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        searchPoint();
+      }
     });
 
     map.on('click', function(event) {
-        var layers = [pointLayer, zoneLayer];
-        layers.forEach(function(layer) {
-            layer.eachLayer(function(marker) {
-                if (map.getBounds().contains(event.latlng) && marker instanceof L.Marker && marker.isPopupOpen()) {
-                    marker.closePopup();
-                }
-            });
+      var layers = [pointLayer, zoneLayer];
+      layers.forEach(function(layer) {
+        layer.eachLayer(function(marker) {
+          if (map.getBounds().contains(event.latlng) && marker instanceof L.Marker && marker.isPopupOpen()) {
+            marker.closePopup();
+          }
         });
+      });
     });
   </script>
 </body>
 </html>
+
